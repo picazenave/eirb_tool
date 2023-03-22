@@ -1,12 +1,13 @@
-cmake_minimum_required(VERSION 3.12...3.25)
+cmake_minimum_required(VERSION 2.8..3.25)
 
 project(
   main
-  VERSION 1.0
-  LANGUAGES C)
+  C)
 
 set(CMAKE_C_STANDARD 99)
 include_directories(include) 
+
+set (CMAKE_C_FLAGS "-std=gnu99")
 
 file(GLOB_RECURSE SRC_FILES src/*.c)
 

@@ -22,11 +22,12 @@ int extract_line(const char *full, const char *to_search, char *sub, int sens)
     int i = 0;
     if (sens == 1)
     {
-        while (pos[i] != '\n')
+        while (pos[i] != '\n' &&  pos[i]!=0)
         {
             sub[i] = pos[i];
             i++;
         }
+	sub[i+1]=0;
     }
     else if (sens == 0)
     {
@@ -72,7 +73,7 @@ int main()
     char path[1035];
 
     /* Open the command for reading. */
-    fp = popen("nmap -n -sP 10.7.0.0/24", "r");
+    fp = popen("nmap -sP 10.7.0.0/24", "r");
     if (fp == NULL)
     {
         printf("Failed to run command\n");
@@ -84,35 +85,36 @@ int main()
     {
         char sub[MAX_LINE_LENGTH];
         char subsub[MAX_LINE_LENGTH];
-        for (int i = 0; i < MAX_LINE_LENGTH; i++)
+	char subsubsub[MAX_LINE_LENGTH];
+	char subsubsubsub[MAX_LINE_LENGTH];
+        for (int i = 0; i < MAX_LINE_LENGTH; i++){
             sub[i] = 0;
+		subsub[i]=0;
+		subsubsub[i]=0;
+		subsubsubsub[i]=0;
+}
+
         int found = extract_line(path, "Nmap scan report for ", sub, 1);
 
         if (found == 0)
         {
-            printf("\"%s\"\n", sub);
+    //        printf("sub:\"%s\"\n", sub);
 
-            str_before_delimiter(sub, ".pedago.ipb.fr", subsub) ;
-            printf("\"%s\"\n", subsub);
-        } // else  printf("Ligne pas trouvé READ:\n\"%s\"", line);
+            str_before_delimiter(sub, '.', subsub) ;
+  //          printf("subsub:\"%s\"\n", subsub);
+		if(extract_line(subsub,"for",subsubsub,1)==0){
+//		printf("subsubsub \"%s\"\n",subsubsub);
+
+		if(extract_line(subsubsub," ",subsubsubsub,1)==0)
+		printf("Hôte dispo :%s\n",subsubsubsub);
+		}
+	
+        }
         // printf("%s", path);
     }
 
     /* close */
     pclose(fp);
-
-    if (fail == true)
-    {
-        printf("======================\n");
-        printf(ANSI_RED "        FAIL" ANSI_RESET "\n");
-        printf("======================\n");
-    }
-    else
-    {
-        printf("======================\n");
-        printf(ANSI_GREEN "        PASS" ANSI_RESET "\n");
-        printf("======================\n");
-    }
 
     return 0;
 }
